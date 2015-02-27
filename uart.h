@@ -25,7 +25,7 @@
 extern "C" {
 #endif
 
-void uart_init(void);
+void uart_init(uint32_t);
 void uart_putc(uint8_t);
 void uart_putbyte(uint8_t);
 uint8_t uart_getc(void);

@@ -110,13 +110,15 @@ reg_read(uint32_t addr)
  * up to 384 MHz fit into a 32-bit register and the default is 3MHz.
  */
 static void
-uart_set_baud_rate(void)
+uart_set_baud_rate(uint32_t clk)
 {
-	uint32_t clk;
 	uint32_t rate;
 	uint32_t i, f;
 
-	clk = 128 * UART_DEFAULT_CLK;
+	if (!clk)
+		clk = UART_DEFAULT_CLK;
+
+	clk *= 128;
 
 	rate = clk / (16 * UART_RATE);
 	i = rate / 128;
@@ -127,7 +129,7 @@ uart_set_baud_rate(void)
 }
 
 void
-uart_init(void)
+uart_init(uint32_t uart_clock)
 {
 	uint32_t v;
 	int i;
@@ -154,7 +156,7 @@ uart_init(void)
 	reg_write(UART_BASE + UART_ICR, 0x7ff);
 
 	/* set the baud rate */
-	uart_set_baud_rate();
+	uart_set_baud_rate(uart_clock);
 
 	/* select 8-bit, enable FIFOs */
 	reg_write(UART_BASE + UART_LCRH, UART_LCRH_WLEN_8 | UART_LCRH_FEN);
