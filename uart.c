@@ -77,6 +77,25 @@ bcm2835_uart_nop(void)
 }
 
 /*
+ * MMIO register access
+ */
+static inline void
+reg_write(uint32_t addr, uint32_t val)
+{
+	volatile uint32_t *ptr = (volatile uint32_t *)addr;
+
+	*ptr = val;
+}
+
+static inline uint32_t
+reg_read(uint32_t addr)
+{
+	volatile uint32_t *ptr = (volatile uint32_t *)addr;
+
+	return *ptr;
+}
+
+/*
  * uartclk / (16 * bps) = rate
  * IBRD = (int) rate
  * FBRD = (int) (fraction(rate) * 64 + 0.5)
