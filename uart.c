@@ -71,7 +71,7 @@
  * A simple nop
  */
 static void
-bcm2835_uart_nop(void)
+uart_nop(void)
 {
 	__asm__ volatile("mov r0, r0\n" : : :);
 }
@@ -110,7 +110,7 @@ reg_read(uint32_t addr)
  * up to 384 MHz fit into a 32-bit register and the default is 3MHz.
  */
 static void
-bcm2835_uart_set_baud_rate(void)
+uart_set_baud_rate(void)
 {
 	uint32_t clk;
 	uint32_t rate;
@@ -122,84 +122,84 @@ bcm2835_uart_set_baud_rate(void)
 	i = rate / 128;
 	f = ((rate - i * 128) + 1) / 2;
 
-	arm_reg_write(UART_BASE + UART_IBRD, i);
-	arm_reg_write(UART_BASE + UART_FBRD, f);
+	reg_write(UART_BASE + UART_IBRD, i);
+	reg_write(UART_BASE + UART_FBRD, f);
 }
 
 void
-bcm2835_uart_init(void)
+uart_init(void)
 {
 	uint32_t v;
 	int i;
 
 	/* disable UART */
-	arm_reg_write(UART_BASE + UART_CR, 0);
+	reg_write(UART_BASE + UART_CR, 0);
 
 	/* TODO: Factor out the gpio bits */
-	v = arm_reg_read(GPIO_BASE + GPIO_FSEL1);
+	v = reg_read(GPIO_BASE + GPIO_FSEL1);
 	v &= GPIO_UART_MASK;
 	v |= GPIO_SEL_ALT0 << GPIO_UART_RX_SHIFT;
 	v |= GPIO_SEL_ALT0 << GPIO_UART_TX_SHIFT;
-	arm_reg_write(GPIO_BASE + GPIO_FSEL1, v);
+	reg_write(GPIO_BASE + GPIO_FSEL1, v);
 
-	arm_reg_write(GPIO_BASE + GPIO_PUD, GPIO_PUD_DISABLE);
+	reg_write(GPIO_BASE + GPIO_PUD, GPIO_PUD_DISABLE);
 	for (i = 0; i < 150; i++)
-		bcm2835_uart_nop();
-	arm_reg_write(GPIO_BASE + GPIO_PUDCLK0, GPIO_PUDCLK_UART);
+		uart_nop();
+	reg_write(GPIO_BASE + GPIO_PUDCLK0, GPIO_PUDCLK_UART);
 	for (i = 0; i < 150; i++)
-		bcm2835_uart_nop();
-	arm_reg_write(GPIO_BASE + GPIO_PUDCLK0, 0);
+		uart_nop();
+	reg_write(GPIO_BASE + GPIO_PUDCLK0, 0);
 
 	/* clear all interrupts */
-	arm_reg_write(UART_BASE + UART_ICR, 0x7ff);
+	reg_write(UART_BASE + UART_ICR, 0x7ff);
 
 	/* set the baud rate */
-	bcm2835_uart_set_baud_rate();
+	uart_set_baud_rate();
 
 	/* select 8-bit, enable FIFOs */
-	arm_reg_write(UART_BASE + UART_LCRH, UART_LCRH_WLEN_8 | UART_LCRH_FEN);
+	reg_write(UART_BASE + UART_LCRH, UART_LCRH_WLEN_8 | UART_LCRH_FEN);
 
 	/* enable UART */
-	arm_reg_write(UART_BASE + UART_CR, UART_CR_UARTEN | UART_CR_TXE |
+	reg_write(UART_BASE + UART_CR, UART_CR_UARTEN | UART_CR_TXE |
 	    UART_CR_RXE);
 }
 
 void
-bcm2835_uart_putc(uint8_t c)
+uart_putc(uint8_t c)
 {
-	while (arm_reg_read(UART_BASE + UART_FR) & UART_FR_TXFF)
+	while (reg_read(UART_BASE + UART_FR) & UART_FR_TXFF)
 		;
-	arm_reg_write(UART_BASE + UART_DR, c & 0x7f);
+	reg_write(UART_BASE + UART_DR, c & 0x7f);
 	if (c == '\n')
-		bcm2835_uart_putc('\r');
+		uart_putc('\r');
 }
 
 void
-bcm2835_uart_putbyte(uint8_t c)
+uart_putbyte(uint8_t c)
 {
-	while (arm_reg_read(UART_BASE + UART_FR) & UART_FR_TXFF)
+	while (reg_read(UART_BASE + UART_FR) & UART_FR_TXFF)
 		;
-	arm_reg_write(UART_BASE + UART_DR, c);
+	reg_write(UART_BASE + UART_DR, c);
 }
 
 uint8_t
-bcm2835_uart_getc(void)
+uart_getc(void)
 {
-	while (arm_reg_read(UART_BASE + UART_FR) & UART_FR_RXFE)
+	while (reg_read(UART_BASE + UART_FR) & UART_FR_RXFE)
 		;
-	return (arm_reg_read(UART_BASE + UART_DR) & 0x7f);
+	return (reg_read(UART_BASE + UART_DR) & 0x7f);
 }
 
 uint8_t
-bcm2835_uart_getbyte(void)
+uart_getbyte(void)
 {
-	while (arm_reg_read(UART_BASE + UART_FR) & UART_FR_RXFE)
+	while (reg_read(UART_BASE + UART_FR) & UART_FR_RXFE)
 		;
-	return (arm_reg_read(UART_BASE + UART_DR));
+	return (reg_read(UART_BASE + UART_DR));
 }
 
 int
-bcm2835_uart_isc(void)
+uart_isc(void)
 {
-	return ((arm_reg_read(UART_BASE + UART_FR) & UART_FR_RXFE) == 0);
+	return ((reg_read(UART_BASE + UART_FR) & UART_FR_RXFE) == 0);
 }

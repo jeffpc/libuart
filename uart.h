@@ -14,28 +14,28 @@
  * Copyright 2015 (c) Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
  */
 
-#ifndef _BCM2835_UART_H
-#define	_BCM2835_UART_H
+#ifndef __UART_H
+#define	__UART_H
 
 /*
- * Interface to the BCM2835's uart.
+ * Interface to the a PL011 uart.
  */
+
+#include "system.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <inttypes.h>
-
-void bcm2835_uart_init(void);
-void bcm2835_uart_putc(uint8_t);
-void bcm2835_uart_putbyte(uint8_t);
-uint8_t bcm2835_uart_getc(void);
-uint8_t bcm2835_uart_getbyte(void);
-int bcm2835_uart_isc(void);
+void uart_init(void);
+void uart_putc(uint8_t);
+void uart_putbyte(uint8_t);
+uint8_t uart_getc(void);
+uint8_t uart_getbyte(void);
+int uart_isc(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _BCM2835_UART_H */
+#endif /* __UART_H */
