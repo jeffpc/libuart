@@ -8,4 +8,4 @@
 #error "Unknown platform"
 #endif
 
-const long mmio_base = MMIO_BASE;
+const uint32_t mmio_base = MMIO_BASE;
