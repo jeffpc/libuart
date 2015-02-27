@@ -32,6 +32,9 @@ uint8_t uart_getc(void);
 uint8_t uart_getbyte(void);
 int uart_isc(void);
 
+/* some useful things exposed for others to use */
+extern const char * const platform_name;
+
 #ifdef __cplusplus
 }
 #endif
