@@ -17,9 +17,9 @@
 /*
  * A simple uart driver for the RPi.
  */
-#include <sys/types.h>
 
 #include "uart.h"
+#include "system.h"
 
 /*
  * The primary serial console that we end up using is the normal UART, not
@@ -27,7 +27,7 @@
  * as well.
  */
 
-#define	UART_BASE		0x20201000
+#define	UART_BASE		(mmio_base + 0x00201000)
 #define	UART_DR			0x0
 #define	UART_FR			0x18
 #define	UART_IBRD		0x24
@@ -54,7 +54,7 @@
  * All we care about are pins 14 and 15 for the UART.  Specifically, alt0
  * for GPIO14 is TXD0 and GPIO15 is RXD0. Those are controlled by FSEL1.
  */
-#define	GPIO_BASE	0x20200000
+#define	GPIO_BASE	(mmio_base + 0x00200000)
 #define	GPIO_FSEL1	0x4
 #define	GPIO_PUD	0x94
 #define	GPIO_PUDCLK0	0x98
