@@ -21,8 +21,6 @@
  * Interface to the a PL011 uart.
  */
 
-#include "system.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif

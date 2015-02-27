@@ -18,8 +18,8 @@
  * A simple uart driver for the RPi.
  */
 
-#include "uart.h"
 #include "system.h"
+#include "uart.h"
 
 /*
  * The primary serial console that we end up using is the normal UART, not
