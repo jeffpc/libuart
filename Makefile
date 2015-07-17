@@ -1,4 +1,6 @@
 CFLAGS=-Wall -O2 -g -ffreestanding
+V6CFLAGS=
+V7CFLAGS=-march=armv7-a
 
 COMMON_OBJS=uart.o
 
@@ -26,7 +28,7 @@ clean:
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 %-bcm2835.o: %.c
-	$(CC) $(CFLAGS) -DPLAT_PI_1_B_PLUS -c -o $@ $<
+	$(CC) $(CFLAGS) $(V6CFLAGS) -DPLAT_PI_1_B_PLUS -c -o $@ $<
 
 %-bcm2836.o: %.c
-	$(CC) $(CFLAGS) -DPLAT_PI_2_B -c -o $@ $<
+	$(CC) $(CFLAGS) $(V7CFLAGS) -DPLAT_PI_2_B -c -o $@ $<
