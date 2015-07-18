@@ -15,3 +15,4 @@
 const uint32_t mmio_base = MMIO_BASE;
 const char * const uart_clock_string = UART_CLOCK_STRING;
 const char * const platform_name = PLAT_NAME;
+const char * const libuart_version = VERSION;

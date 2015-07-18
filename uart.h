@@ -46,6 +46,7 @@ extern struct uart_stats uart_stats;
 /* some useful things exposed for others to use */
 extern const char * const uart_clock_string;
 extern const char * const platform_name;
+extern const char * const libuart_version;
 
 #ifdef __cplusplus
 }

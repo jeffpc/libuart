@@ -1,4 +1,5 @@
-CFLAGS=-Wall -O2 -g -ffreestanding
+VERDEF=-DVERSION='"$(shell git describe --tags --dirty)"'
+CFLAGS=-Wall -O2 -g -ffreestanding $(VERDEF)
 V6CFLAGS=
 V7CFLAGS=-march=armv7-a
 
