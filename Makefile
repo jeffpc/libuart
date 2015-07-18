@@ -2,12 +2,12 @@ CFLAGS=-Wall -O2 -g -ffreestanding
 V6CFLAGS=
 V7CFLAGS=-march=armv7-a
 
-COMMON_OBJS=uart.o
-
-BCM2835_OBJS=$(COMMON_OBJS)	\
+BCM2835_OBJS=\
+     uart-bcm2835.o \
      system-bcm2835.o
 
-BCM2836_OBJS=$(COMMON_OBJS)	\
+BCM2836_OBJS=\
+     uart-bcm2836.o \
      system-bcm2836.o
 
 LIBS=libuart-bcm2835.a \
@@ -23,9 +23,6 @@ libuart-bcm2836.a: $(BCM2836_OBJS)
 
 clean:
 	rm -f $(LIBS) $(BCM2835_OBJS) $(BCM2836_OBJS)
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c -o $@ $<
 
 %-bcm2835.o: %.c
 	$(CC) $(CFLAGS) $(V6CFLAGS) -DPLAT_PI_1_B_PLUS -c -o $@ $<
