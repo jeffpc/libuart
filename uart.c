@@ -36,6 +36,12 @@
 #define	UART_CR			0x30
 #define	UART_ICR		0x44
 
+#define	UART_DR_DATA		0x0ff
+#define	UART_DR_FE		0x100
+#define	UART_DR_PE		0x200
+#define	UART_DR_BE		0x400
+#define	UART_DR_OE		0x800
+
 #define	UART_FR_RXFE		0x10		/* RX fifo empty */
 #define	UART_FR_TXFF		0x20		/* TX fifo full */
 
@@ -66,6 +72,11 @@
 
 #define	GPIO_PUD_DISABLE	0x0
 #define	GPIO_PUDCLK_UART	0x0000c000
+
+/*
+ * Statistics
+ */
+struct uart_stats uart_stats;
 
 /*
  * A simple nop
@@ -169,11 +180,9 @@ uart_init(uint32_t uart_clock)
 void
 uart_putc(uint8_t c)
 {
-	while (reg_read(UART_BASE + UART_FR) & UART_FR_TXFF)
-		;
-	reg_write(UART_BASE + UART_DR, c & 0x7f);
+	uart_putbyte(c & 0x7f);
 	if (c == '\n')
-		uart_putc('\r');
+		uart_putbyte('\r');
 }
 
 void
@@ -182,22 +191,35 @@ uart_putbyte(uint8_t c)
 	while (reg_read(UART_BASE + UART_FR) & UART_FR_TXFF)
 		;
 	reg_write(UART_BASE + UART_DR, c);
+	uart_stats.tx_bytes++;
 }
 
 uint8_t
 uart_getc(void)
 {
-	while (reg_read(UART_BASE + UART_FR) & UART_FR_RXFE)
-		;
 	return (reg_read(UART_BASE + UART_DR) & 0x7f);
 }
 
 uint8_t
 uart_getbyte(void)
 {
+	uint32_t byte;
+
 	while (reg_read(UART_BASE + UART_FR) & UART_FR_RXFE)
 		;
-	return (reg_read(UART_BASE + UART_DR));
+	byte = reg_read(UART_BASE + UART_DR);
+
+	uart_stats.rx_bytes++;
+	if (byte & UART_DR_FE)
+		uart_stats.framing_error++;
+	if (byte & UART_DR_PE)
+		uart_stats.parity_error++;
+	if (byte & UART_DR_BE)
+		uart_stats.break_error++;
+	if (byte & UART_DR_OE)
+		uart_stats.overrun_error++;
+
+	return byte & UART_DR_DATA;
 }
 
 int

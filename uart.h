@@ -25,12 +25,23 @@
 extern "C" {
 #endif
 
+struct uart_stats {
+	uint32_t rx_bytes;
+	uint32_t tx_bytes;
+	uint32_t overrun_error;
+	uint32_t break_error;
+	uint32_t parity_error;
+	uint32_t framing_error;
+};
+
 void uart_init(uint32_t);
 void uart_putc(uint8_t);
 void uart_putbyte(uint8_t);
 uint8_t uart_getc(void);
 uint8_t uart_getbyte(void);
 int uart_isc(void);
+
+extern struct uart_stats uart_stats;
 
 /* some useful things exposed for others to use */
 extern const char * const uart_clock_string;
